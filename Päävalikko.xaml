@@ -1,0 +1,53 @@
+﻿<Window x:Class="Toimistotilojen_varausjarjestelma.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Toimistotilojen_varausjarjestelma"
+        mc:Ignorable="d"
+        Title="Päävalikko" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Background="{StaticResource BrandBackgroundColor}"/>
+        <StackPanel
+            Grid.Row="0"
+            Margin="0,40,0,20"
+            HorizontalAlignment="Center">
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="36"
+                FontWeight="Bold"
+                Foreground="Black"
+                Text="VuokraToimistot Oy"/>
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="24"
+                FontWeight="Light"
+                Foreground="DimGray"
+                Text="Toimistotilojen varausjärjestelmä " />
+        </StackPanel>
+        <Border Grid.Row="1" Background="{StaticResource BrandBackgroundColor}"/>
+        <StackPanel
+      Grid.Row="1"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Top" 
+      Margin="50"      >
+
+            <UniformGrid Columns="3">
+                <Button Content="Uusi varaus" Click="UusiVaraus_Click"/>
+                <Button Content="Asiakkaat" Click="Asiakkaat_Click"/>
+                <Button Content="Raportit" Click="Raportit_Click" />
+                <Button Content="Kaikki varaukset" Click="KaikkiVaraukset_Click"/>
+                <Button Content="Palvelut ja Laitteet" Click="PalvelutJaLaitteet_Click"/>
+                <Button Content="Laskujen hallinta" Click="Laskutus_Click"/>
+                <Button Content="Muokkaa varausta" Click="Muokkaa_Varausta_Click"/>
+                <Button Content="Toimipisteet ja Tilat" Click="Toimipisteet_Click"/>
+                <Button Content="Poistu" Background="LightPink" Click="Sulje_Click"/>
+            </UniformGrid>
+        </StackPanel>
+    </Grid>
+</Window>

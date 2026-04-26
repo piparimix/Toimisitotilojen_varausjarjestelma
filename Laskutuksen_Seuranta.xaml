@@ -1,0 +1,92 @@
+﻿<Window x:Class="Toimistotilojen_varausjarjestelma.Laskutuksen_Seuranta"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Toimistotilojen_varausjarjestelma"
+        mc:Ignorable="d"
+        Title="Laskutuksen seuranta" Height="600" Width="1000"
+        Background="{StaticResource BrandBackgroundColor}">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                    Content="Takaisin Päävalikkoon"
+                    Background="LightPink"
+                    Padding="15,8"
+                    Click="Takaisin_Click"/>
+
+            <TextBlock Grid.Column="1"
+                       Text="Laskutuksen seuranta"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Margin="30,0,0,0"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Background="White" Margin="0,10,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="15">
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBlock Text="Haku:"
+                               VerticalAlignment="Center"
+                               FontWeight="SemiBold"
+                               Margin="0,0,8,0"/>
+
+                    <TextBox x:Name="TxtHaku"
+                             Width="220"
+                             Margin="0,0,10,0"/>
+
+                    <Button Content="Hae"
+                            Width="98"
+                            Click="Hae_Click" Height="37"/>
+
+                    <Button Content="Näytä kaikki"
+                            Width="137"
+                            Margin="10,0,0,0"
+                            Click="NaytaKaikki_Click" Height="35"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock x:Name="TxtAvoimet"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Margin="0,0,25,0"/>
+                    <TextBlock x:Name="TxtMaksetut"
+                               FontSize="16"
+                               FontWeight="SemiBold"/>
+                </StackPanel>
+            </StackPanel>
+
+            <DataGrid x:Name="DgLaskut"
+                      Grid.Row="1"
+                      Margin="15"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      CanUserAddRows="False"
+                      Background="White">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Asiakas" Binding="{Binding Asiakas}" Width="*"/>
+                    <DataGridTextColumn Header="Summa" Binding="{Binding Summa}" Width="120"/>
+                    <DataGridTextColumn Header="Eräpäivä" Binding="{Binding EraPaiva}" Width="120"/>
+                    <DataGridTextColumn Header="Laskutustapa" Binding="{Binding Laskutustapa}" Width="140"/>
+                    <DataGridTextColumn Header="Tila" Binding="{Binding Tila}" Width="120"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Window>
