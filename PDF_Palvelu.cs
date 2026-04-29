@@ -155,7 +155,7 @@ namespace Toimistotilojen_varausjarjestelma
             })
             .GeneratePdf(tiedostoPolku);
         }
-        public static void LuoRaporttiPDF(List<Varaus> varaukset, DateTime alku, DateTime loppu, string tiedostoPolku)
+        public static void LuoRaporttiPDF(List<Varaus> varaukset, List<Asiakas> asiakkaat, List<Toimipiste> toimipisteet, List<Tila> tilat, DateTime alku, DateTime loppu, string tiedostoPolku)
         {
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -173,41 +173,68 @@ namespace Toimistotilojen_varausjarjestelma
                     {
                         table.ColumnsDefinition(columns =>
                         {
-                            columns.ConstantColumn(40); // ID
+                            columns.ConstantColumn(30); // ID
                             columns.RelativeColumn(2);  // Asiakas
                             columns.RelativeColumn(2);  // Toimipiste
-                            columns.ConstantColumn(70); // Alku
-                            columns.ConstantColumn(70); // Loppu
-                            columns.ConstantColumn(50); // Tila
-                            columns.RelativeColumn(1); // Summa
+                            columns.RelativeColumn(3);  // Tila (Wider to prevent awkward wrapping of long names)
+                            columns.ConstantColumn(65); // Alku
+                            columns.ConstantColumn(65); // Loppu
+                            columns.ConstantColumn(95); // Varaustila (Wider for the formatted text)
+                            columns.RelativeColumn(1);  // Summa
                         });
 
                         table.Header(header =>
                         {
                             header.Cell().Element(HeaderStyle).Text("ID");
-                            header.Cell().Element(HeaderStyle).Text("Asiakas ID");
-                            header.Cell().Element(HeaderStyle).Text("Toimipiste ID");
+                            header.Cell().Element(HeaderStyle).Text("Asiakas");
+                            header.Cell().Element(HeaderStyle).Text("Toimipiste");
+                            header.Cell().Element(HeaderStyle).Text("Tila");
                             header.Cell().Element(HeaderStyle).Text("Alkaa");
                             header.Cell().Element(HeaderStyle).Text("Päättyy");
-                            header.Cell().Element(HeaderStyle).Text("Tila");
+                            header.Cell().Element(HeaderStyle).Text("Varaustila");
                             header.Cell().Element(HeaderStyle).AlignRight().Text("Yhteensä");
                         });
 
                         foreach (var v in varaukset)
                         {
+                            // Find the related objects
+                            var asiakas = asiakkaat.FirstOrDefault(a => a.AsiakasId == v.AsiakasId);
+                            var toimipiste = toimipisteet.FirstOrDefault(t => t.ToimipisteId == v.ToimipisteId);
+                            var tila = tilat.FirstOrDefault(t => t.TilaId == v.TilaId);
+
+                            // Safely extract names
+                            string asiakasNimi = asiakas != null ? $"{asiakas.Etunimi} {asiakas.Sukunimi}" : "Tuntematon";
+                            string toimipisteNimi = toimipiste != null ? toimipiste.ToimipisteenNimi : "Tuntematon";
+                            string tilaNimi = tila != null ? tila.TilanNimi : "Tuntematon";
+                            decimal tilanHinta = tila != null ? tila.Hinta : 0;
+
+                            // Format the enum to look natural
+                            string tilaTeksti = v.Tila switch
+                            {
+                                Varaustila.OdottaaVahvistusta => "Odottaa vahvistusta",
+                                Varaustila.Vahvistettu => "Vahvistettu",
+                                Varaustila.Peruttu => "Peruttu",
+                                _ => v.Tila.ToString()
+                            };
+
                             table.Cell().Element(CellStyle).Text(v.VarausId.ToString());
-                            table.Cell().Element(CellStyle).Text(v.AsiakasId.ToString());
-                            table.Cell().Element(CellStyle).Text(v.ToimipisteId.ToString());
-                            table.Cell().Element(CellStyle).Text(v.VarausAlkuPvm.ToShortDateString());
-                            table.Cell().Element(CellStyle).Text(v.VarausLoppuPvm.ToShortDateString());
-                            table.Cell().Element(CellStyle).Text(v.Tila.ToString());
-                            table.Cell().Element(CellStyle).AlignRight().Text($"{v.LaskeVarauksenYhteishinta(0):N2} €"); // Huom: tilan hinta pitäisi hakea tässä
+                            table.Cell().Element(CellStyle).Text(asiakasNimi);
+                            table.Cell().Element(CellStyle).Text(toimipisteNimi);
+                            table.Cell().Element(CellStyle).Text(tilaNimi);
+
+                            // Force the standard Finnish date format regardless of OS culture settings
+                            table.Cell().Element(CellStyle).Text(v.VarausAlkuPvm.ToString("dd.MM.yyyy"));
+                            table.Cell().Element(CellStyle).Text(v.VarausLoppuPvm.ToString("dd.MM.yyyy"));
+
+                            table.Cell().Element(CellStyle).Text(tilaTeksti);
+                            table.Cell().Element(CellStyle).AlignRight().Text($"{v.LaskeVarauksenYhteishinta(tilanHinta):N2} €");
                         }
                     });
                 });
             })
             .GeneratePdf(tiedostoPolku);
         }
+
 
         // --- APUTYYLIT ---
         static IContainer HeaderStyle(IContainer container)

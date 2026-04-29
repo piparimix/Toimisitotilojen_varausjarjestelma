@@ -98,6 +98,7 @@ namespace Toimistotilojen_varausjarjestelma
                 TestiDataGeneraattori generaattori = new TestiDataGeneraattori();
                 generaattori.GeneroiData(5, 2, 5, 5, 3, 3);
 
+                // --- Laskun tietojen asettaminen ---
                 var varaus = generaattori.Varaukset[0];
                 var asiakas = generaattori.Asiakkaat.First(a => a.AsiakasId == varaus.AsiakasId);
                 var toimipiste = generaattori.Toimipisteet.First(t => t.ToimipisteId == varaus.ToimipisteId);
@@ -109,14 +110,39 @@ namespace Toimistotilojen_varausjarjestelma
 
                 string baseDir = AppDomain.CurrentDomain.BaseDirectory;
                 string projectRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(baseDir, @"..\..\..\"));
+
+                // --- Luo Lasku PDF ---
                 string laskutPath = System.IO.Path.Combine(projectRoot, "Laskut");
                 System.IO.Directory.CreateDirectory(laskutPath);
+                string laskuPolku = System.IO.Path.Combine(laskutPath, $"Lasku_{lasku.LaskuId}.pdf");
 
-                string tiedostoPolku = System.IO.Path.Combine(laskutPath, $"Lasku_{lasku.LaskuId}.pdf");
                 lasku.Summa = varaus.LaskeVarauksenYhteishinta(tila.Hinta);
-                PDF_Palvelu.LuoLaskuPDF(lasku, varaus, asiakas, toimipiste, tila, tiedostoPolku);
-                MessageBox.Show($"PDF luotu onnistuneesti kansioon:\n{tiedostoPolku}", "Onnistui", MessageBoxButton.OK, MessageBoxImage.Information);
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tiedostoPolku) { UseShellExecute = true });
+                PDF_Palvelu.LuoLaskuPDF(lasku, varaus, asiakas, toimipiste, tila, laskuPolku);
+
+                // --- Luo Raportti PDF ---
+                string raportitPath = System.IO.Path.Combine(projectRoot, "Raportit");
+                System.IO.Directory.CreateDirectory(raportitPath);
+                string raporttiPolku = System.IO.Path.Combine(raportitPath, "TestiRaportti.pdf");
+
+                DateTime alku = DateTime.Now;
+                DateTime loppu = DateTime.Now.AddDays(30);
+
+                // Pass the lists of Asiakkaat, Toimipisteet, and Tilat into the method
+                PDF_Palvelu.LuoRaporttiPDF(
+                    generaattori.Varaukset,
+                    generaattori.Asiakkaat,
+                    generaattori.Toimipisteet,
+                    generaattori.Tilat,
+                    alku,
+                    loppu,
+                    raporttiPolku
+                );
+
+                MessageBox.Show($"PDF:t luotu onnistuneesti kansioihin:\n{laskutPath}\n{raportitPath}", "Onnistui", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                // Avaa molemmat tiedostot testauksen vuoksi
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(laskuPolku) { UseShellExecute = true });
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(raporttiPolku) { UseShellExecute = true });
             }
             catch (Exception ex)
             {
