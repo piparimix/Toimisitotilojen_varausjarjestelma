@@ -29,5 +29,13 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="AlternatingRowBackground" Value="Beige" />
+            <Setter Property="HorizontalGridLinesBrush" Value="Black" />
+            <Setter Property="VerticalGridLinesBrush" Value="Black" />
+        </Style>
     </Application.Resources>
 </Application>

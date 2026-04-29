@@ -88,7 +88,7 @@
 
                 <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,20"  >
                     <Button Content="Luo varaus" Background="#FF90EE90"/>
-                    <Button Content="Takaisin valikkoon"  Background="#FFFFB6C1" Click="Button_Click"/>
+                    <Button Content="Takaisin valikkoon"  Background="#FFFFB6C1" Click="Takaisin_Click"/>
                 </StackPanel>
             </Grid>
         </Grid>

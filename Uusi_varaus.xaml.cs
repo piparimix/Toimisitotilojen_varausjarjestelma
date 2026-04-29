@@ -23,7 +23,7 @@ namespace Toimistotilojen_varausjarjestelma
             LoadDummyData();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Takaisin_Click(object sender, RoutedEventArgs e)
         {
             MainWindow paavalikko = new MainWindow();
             paavalikko.Show();
@@ -65,6 +65,11 @@ namespace Toimistotilojen_varausjarjestelma
             sp.Children.Add(cb);
             sp.Children.Add(combo);
             LaitteetListBox.Items.Add(sp);
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Toimistotilojen_varausjarjestelma
     {
         public MainWindow()
         {
-            InitializeComponent();       
+            InitializeComponent();
         }
 
         private void Sulje_Click(object sender, RoutedEventArgs e)
@@ -60,7 +60,7 @@ namespace Toimistotilojen_varausjarjestelma
             toimipisteetWin.ShowDialog();
 
         }
-       
+
         private void Muokkaa_Varausta_Click(object sender, RoutedEventArgs e)
         {
             Muokkaa_Varausta muokkaaWin = new Muokkaa_Varausta();
@@ -88,5 +88,41 @@ namespace Toimistotilojen_varausjarjestelma
             this.Close();
             laskutusWin.ShowDialog();
         }
-    }
+
+
+        // TestiPDF-nappi on tarkoitettu vain kehityskäyttöön, eikä sitä ole tarkoitus näkyviin lopullisessa versiossa
+        private void TestiPDF_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TestiDataGeneraattori generaattori = new TestiDataGeneraattori();
+                generaattori.GeneroiData(5, 2, 5, 5, 3, 3);
+
+                var varaus = generaattori.Varaukset[0];
+                var asiakas = generaattori.Asiakkaat.First(a => a.AsiakasId == varaus.AsiakasId);
+                var toimipiste = generaattori.Toimipisteet.First(t => t.ToimipisteId == varaus.ToimipisteId);
+                var tila = generaattori.Tilat.First(t => t.TilaId == varaus.TilaId);
+                var lasku = generaattori.Laskut.First(l => l.VarausId == varaus.VarausId);
+
+                if (generaattori.Palvelut.Count > 0) varaus.VaratutPalvelut.Add(generaattori.Palvelut[0]);
+                if (generaattori.Laitteet.Count > 0) varaus.VaratutLaitteet.Add(generaattori.Laitteet[0]);
+
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string projectRoot = System.IO.Path.GetFullPath(System.IO.Path.Combine(baseDir, @"..\..\..\"));
+                string laskutPath = System.IO.Path.Combine(projectRoot, "Laskut");
+                System.IO.Directory.CreateDirectory(laskutPath);
+
+                string tiedostoPolku = System.IO.Path.Combine(laskutPath, $"Lasku_{lasku.LaskuId}.pdf");
+                lasku.Summa = varaus.LaskeVarauksenYhteishinta(tila.Hinta);
+                PDF_Palvelu.LuoLaskuPDF(lasku, varaus, asiakas, toimipiste, tila, tiedostoPolku);
+                MessageBox.Show($"PDF luotu onnistuneesti kansioon:\n{tiedostoPolku}", "Onnistui", MessageBoxButton.OK, MessageBoxImage.Information);
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tiedostoPolku) { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Virhe PDF:n luonnissa: {ex.Message}", "Virhe", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+    } 
 }
+    

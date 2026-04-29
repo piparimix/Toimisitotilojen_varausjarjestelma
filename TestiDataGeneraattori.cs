@@ -27,21 +27,19 @@ namespace Toimistotilojen_varausjarjestelma
                 .RuleFor(a => a.Puhelin, f => f.Phone.PhoneNumber("040 ### ####"))
                 .RuleFor(a => a.Osoite, f => f.Address.StreetAddress())
                 .RuleFor(a => a.Tyyppi, f => f.PickRandom<Asiakastyyppi>())
-                .RuleFor(a => a.Laskutustapa, f => f.PickRandom<LaskunTyyppi>());
-
+                .RuleFor(a => a.Laskutustapa, f => f.PickRandom<LaskunTyyppi>())
+                .RuleFor(a => a.YTunnus, (f, a) =>(a.Tyyppi == Asiakastyyppi.Yritys || a.Tyyppi == Asiakastyyppi.Organisaatio) ? $"{f.Random.Number(1000000, 9999999)}-{f.Random.Number(0, 9)}" : string.Empty);
             Asiakkaat = asiakasFaker.Generate(asiakasMaara);
 
             // 2. Generate Toimipiste data
             var toimipisteFaker = new Faker<Toimipiste>("fi")
-      .RuleFor(t => t.ToimipisteId, f => f.IndexFaker + 1)
-      .RuleFor(t => t.ToimipisteenNimi, f => f.Company.CompanyName() + " Toimisto")
-      .RuleFor(t => t.Kaupunki, f => f.Address.City())
-      .RuleFor(t => t.Osoite, f => f.Address.StreetAddress())
-
-      // Uudet kentät lisätty Bogukseen
-      .RuleFor(t => t.Postitoimipaikka, (f, t) => t.Kaupunki) // Yleensä postitoimipaikka on sama kuin kaupunki
-      .RuleFor(t => t.Postinumero, f => f.Random.Int(10000, 99999)) // Postinumero on int Luokat.cs:ssä
-      .RuleFor(t => t.Puhelinnumero, f => f.Phone.PhoneNumber("09 ### ####"));
+                 .RuleFor(t => t.ToimipisteId, f => f.IndexFaker + 1)
+                 .RuleFor(t => t.ToimipisteenNimi, f => f.Company.CompanyName() + " Toimisto")
+                 .RuleFor(t => t.Kaupunki, f => f.Address.City())
+                 .RuleFor(t => t.Osoite, f => f.Address.StreetAddress())
+                 .RuleFor(t => t.Postitoimipaikka, (f, t) => t.Kaupunki) // Yleensä postitoimipaikka on sama kuin kaupunki
+                 .RuleFor(t => t.Postinumero, f => f.Random.Int(10000, 99999)) // Postinumero on int Luokat.cs:ssä
+                 .RuleFor(t => t.Puhelinnumero, f => f.Phone.PhoneNumber("09 ### ####"));
 
             Toimipisteet = toimipisteFaker.Generate(toimipisteMaara);
 

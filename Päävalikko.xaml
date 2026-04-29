@@ -47,6 +47,7 @@
                 <Button Content="Muokkaa varausta" Click="Muokkaa_Varausta_Click"/>
                 <Button Content="Toimipisteet ja Tilat" Click="Toimipisteet_Click"/>
                 <Button Content="Poistu" Background="LightPink" Click="Sulje_Click"/>
+                <Button Content="Testi PDF" Click="TestiPDF_Click"/>
             </UniformGrid>
         </StackPanel>
     </Grid>

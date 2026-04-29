@@ -63,6 +63,7 @@ namespace Toimistotilojen_varausjarjestelma
                         "sahkoposti VARCHAR(254) NOT NULL," +
                         "Puhelinnro VARCHAR(20) NOT NULL," +
                         "Osoite VARCHAR(100) NOT NULL," +
+                        "YTunnus VARCHAR(20)," +
                         "Tyyppi ENUM('Yritys','Organisaatio', 'Yksityishenkilö') NOT NULL," +
                         "Laskutustapa ENUM('Sähköposti','Paperi') NOT NULL," +
                         "itime TIMESTAMP," +
@@ -205,8 +206,8 @@ namespace Toimistotilojen_varausjarjestelma
                 {
                     try
                     {
-                        string sql = "INSERT INTO ASIAKAS (Etunimi, Sukunimi, sahkoposti, Puhelinnro, Osoite, Tyyppi, Laskutustapa) " +
-                                     "VALUES (@etunimi, @sukunimi, @sahkoposti, @puhelin, @osoite, @tyyppi, @laskutustapa)";
+                        string sql = "INSERT INTO ASIAKAS (Etunimi, Sukunimi, sahkoposti, Puhelinnro, Osoite, YTunnus, Tyyppi, Laskutustapa) " +
+                                     "VALUES (@etunimi, @sukunimi, @sahkoposti, @puhelin, @osoite, @ytunnus, @tyyppi, @laskutustapa)";
 
                         using (MySqlCommand cmd = new MySqlCommand(sql, conn, tr))
                         {
@@ -218,6 +219,7 @@ namespace Toimistotilojen_varausjarjestelma
                                 cmd.Parameters.AddWithValue("@sahkoposti", a.Sähköposti);
                                 cmd.Parameters.AddWithValue("@puhelin", a.Puhelin);
                                 cmd.Parameters.AddWithValue("@osoite", a.Osoite);
+                                cmd.Parameters.AddWithValue("@ytunnus", a.YTunnus);
                                 cmd.Parameters.AddWithValue("@tyyppi", a.Tyyppi.ToString());
                                 cmd.Parameters.AddWithValue("@laskutustapa", a.Laskutustapa.ToString());
                                 await cmd.ExecuteNonQueryAsync();

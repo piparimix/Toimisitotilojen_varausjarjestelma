@@ -27,6 +27,7 @@ namespace Toimistotilojen_varausjarjestelma
                     // --- YLÄTUNNISTE ---
                     page.Header().PaddingBottom(20).Row(row =>
                     {
+                        // Vasen puoli: Laskun tekstit
                         row.RelativeItem().Column(col =>
                         {
                             col.Item().Text("LASKU").FontSize(24).Bold().FontColor(Colors.Blue.Medium);
@@ -35,8 +36,17 @@ namespace Toimistotilojen_varausjarjestelma
                             col.Item().Text($"Päiväys: {DateTime.Now:dd.MM.yyyy}");
                             col.Item().Text($"Eräpäivä: {lasku.Eräpäivä:dd.MM.yyyy}").SemiBold();
                         });
-                    });
 
+                        // Oikea puoli: Viivakoodi
+                        row.ConstantItem(150).AlignRight().Column(col =>
+                        {
+                            // Generate the barcode using the invoice ID
+                            byte[] barcodeImage = Barcode_palvelu.GetBarcodeBytes(lasku.LaskuId.ToString());
+
+                            // Add the barcode image to the PDF
+                            col.Item().Image(barcodeImage);
+                        });
+                    });
                     // --- OSOITETIEDOT ---
                     page.Content().Column(col =>
                     {
@@ -54,6 +64,16 @@ namespace Toimistotilojen_varausjarjestelma
                             {
                                 c.Item().Text("Vastaanottaja").FontSize(9).FontColor(Colors.Grey.Medium);
                                 c.Item().Text($"{asiakas.Etunimi} {asiakas.Sukunimi}").Bold();
+
+                                // Check the customer type and add the Y-tunnus if it's a company or organization
+                                if (asiakas.Tyyppi == Asiakastyyppi.Yritys || asiakas.Tyyppi == Asiakastyyppi.Organisaatio)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(asiakas.YTunnus))
+                                    {
+                                        c.Item().Text($"Y-tunnus: {asiakas.YTunnus}");
+                                    }
+                                }
+
                                 c.Item().Text(asiakas.Osoite);
                                 c.Item().Text(asiakas.Tyyppi.ToString());
                             });
@@ -66,27 +86,24 @@ namespace Toimistotilojen_varausjarjestelma
                         {
                             table.ColumnsDefinition(columns =>
                             {
-                                columns.RelativeColumn(3); // Tuote/Palvelu
-                                columns.RelativeColumn(1); // Määrä
-                                columns.RelativeColumn(1); // Yksikkö
-                                columns.RelativeColumn(2); // hinta
+                                columns.RelativeColumn(4); // Tuote/Palvelu
+                                columns.RelativeColumn(2); // Määrä + Yksikkö (Combined)
+                                columns.RelativeColumn(2); // á Hinta
                                 columns.RelativeColumn(2); // Yhteensä
                             });
 
                             table.Header(header =>
                             {
                                 header.Cell().Element(HeaderStyle).Text("Kuvaus");
-                                header.Cell().Element(HeaderStyle).AlignRight().Text("Määrä");
-                                header.Cell().Element(HeaderStyle).Text("Yks.");
-                                header.Cell().Element(HeaderStyle).AlignRight().Text("á Hinta");
+                                header.Cell().Element(HeaderStyle).AlignRight().Text("Määrä"); // Single header
+                                header.Cell().Element(HeaderStyle).AlignRight().Text("Hinta"); // Or "Yksikköhinta"
                                 header.Cell().Element(HeaderStyle).AlignRight().Text("Yhteensä");
                             });
 
                             // 1. Tilan vuokra
                             int paivat = varaus.Kestopvm();
                             table.Cell().Element(CellStyle).Text(tila.TilanNimi);
-                            table.Cell().Element(CellStyle).AlignRight().Text(paivat.ToString());
-                            table.Cell().Element(CellStyle).Text("pv");
+                            table.Cell().Element(CellStyle).AlignRight().Text($"{paivat} pv"); // Combined text with a space
                             table.Cell().Element(CellStyle).AlignRight().Text($"{tila.Hinta:N2} €");
                             table.Cell().Element(CellStyle).AlignRight().Text($"{tila.Hinta * paivat:N2} €");
 
@@ -94,9 +111,10 @@ namespace Toimistotilojen_varausjarjestelma
                             foreach (var p in varaus.VaratutPalvelut)
                             {
                                 decimal kpl = p.OnPaivakohtainen ? paivat : 1;
+                                string yksikko = p.OnPaivakohtainen ? "pv" : "kpl";
+
                                 table.Cell().Element(CellStyle).Text(p.Nimi);
-                                table.Cell().Element(CellStyle).AlignRight().Text(kpl.ToString());
-                                table.Cell().Element(CellStyle).Text(p.OnPaivakohtainen ? "pv" : "kpl");
+                                table.Cell().Element(CellStyle).AlignRight().Text($"{kpl} {yksikko}"); // Combined
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{p.Hinta:N2} €");
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{(p.Hinta * kpl):N2} €");
                             }
@@ -105,9 +123,9 @@ namespace Toimistotilojen_varausjarjestelma
                             foreach (var l in varaus.VaratutLaitteet)
                             {
                                 decimal kpl = l.OnPaivakohtainen ? (paivat * l.Määrä) : l.Määrä;
+
                                 table.Cell().Element(CellStyle).Text(l.Nimi);
-                                table.Cell().Element(CellStyle).AlignRight().Text(kpl.ToString());
-                                table.Cell().Element(CellStyle).Text("kpl");
+                                table.Cell().Element(CellStyle).AlignRight().Text($"{kpl} kpl"); // Combined
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{l.Hinta:N2} €");
                                 table.Cell().Element(CellStyle).AlignRight().Text($"{(l.Hinta * kpl):N2} €");
                             }
@@ -115,7 +133,7 @@ namespace Toimistotilojen_varausjarjestelma
                             // YHTEENSÄ
                             table.Footer(footer =>
                             {
-                                footer.Cell().ColumnSpan(5).PaddingTop(10).AlignRight().Text($"Loppusumma: {lasku.Summa:N2} €").FontSize(14).Bold();
+                                footer.Cell().ColumnSpan(4).PaddingTop(10).AlignRight().Text($"Loppusumma: {lasku.Summa:N2} €").FontSize(14).Bold();
                             });
                         });
 

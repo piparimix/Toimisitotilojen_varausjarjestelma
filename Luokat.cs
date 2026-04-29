@@ -225,6 +225,7 @@ namespace Toimistotilojen_varausjarjestelma
         public required Asiakastyyppi Tyyppi { get; set; }
         public required LaskunTyyppi Laskutustapa { get; set; }
         public required string Osoite { get; set; }
+        public string YTunnus { get; set; } = string.Empty;
     }
 
     // LaskunTila määrittelee laskun tilan, joka voi olla avoinna, maksettu tai erääntynyt
