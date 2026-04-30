@@ -34,7 +34,7 @@ namespace Toimistotilojen_varausjarjestelma
         // Tästä alas on esimerkkidataa, joka poistetaan ja korvata oikealla datalla myöhemmin
         private void LoadDummyData()
         {
-            string[] palvelut = { "Siivous", "Kasvit", "IT-tuki", "Ikkunan pesu", "Verkkoyhteys", "Kulunvalvonta" };
+            string[] palvelut = { "Siivous", "Kasvit", "IT-tuki", "Ikkunan pesu", "Verkkoyhteys", "Kulunvalvonta","Lattioiden vahaus" };
 
             foreach (string service in palvelut)
             {
@@ -67,10 +67,7 @@ namespace Toimistotilojen_varausjarjestelma
             LaitteetListBox.Items.Add(sp);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-
-        }
+        
     }
 }
 

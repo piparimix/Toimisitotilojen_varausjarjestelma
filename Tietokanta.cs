@@ -197,6 +197,7 @@ namespace Toimistotilojen_varausjarjestelma
         }
 
         // Testi Data
+        // TallennaAsiakkaatAsync-metodi tallentaa listan asiakkaita tietokantaan.
         public async Task TallennaAsiakkaatAsync(List<Asiakas> asiakkaat)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -237,6 +238,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaToimipisteetAsync-metodi tallentaa listan toimipisteitä tietokantaan.
         public async Task TallennaToimipisteetAsync(List<Toimipiste> toimipisteet)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -275,6 +277,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaTilatAsync-metodi tallentaa listan tiloja tietokantaan.
         public async Task TallennaTilatAsync(List<Tila> tilat)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -311,6 +314,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaVarauksetAsync-metodi tallentaa listan varauksia tietokantaan.
         public async Task TallennaVarauksetAsync(List<Varaus> varaukset)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -350,6 +354,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaPalvelutAsync-metodi tallentaa listan palveluita tietokantaan.
         public async Task TallennaPalvelutAsync(List<Palvelu> palvelut)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -397,6 +402,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaLaitteetAsync-metodi tallentaa listan laitteita tietokantaan.
         public async Task TallennaLaitteetAsync(List<Laite> laitteet)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -445,6 +451,7 @@ namespace Toimistotilojen_varausjarjestelma
             }
         }
 
+        // TallennaLaskutAsync-metodi tallentaa listan laskuja tietokantaan.
         public async Task TallennaLaskutAsync(List<Lasku> laskut)
         {
             using (MySqlConnection conn = new MySqlConnection(localWithDb))
@@ -479,5 +486,20 @@ namespace Toimistotilojen_varausjarjestelma
                 }
             }
         } // testi data loppuu tähän
+
+
+        // Tästä eteenpäin voidaan toteuttaa muita tietokantaoperaatioita, kuten tietojen hakua, päivitystä ja poistoa tarpeen mukaan.
+        // Metodi pitää toteuttaa asynkronisesti ja käyttää parametrisoituja SQL-kyselyitä tietoturvan varmistamiseksi.
+        // Metodi pitää kommentoida siten että se kertoo selkeästi mitä se tekee ja missä sitä käytetään, jotta koodin ylläpito ja laajentaminen on helpompaa tulevaisuudessa.
+
+
+
+
+
+
+
+
+
+
     }
 }
